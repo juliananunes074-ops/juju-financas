@@ -1319,7 +1319,17 @@ const RULES = `{
     }
   }
 }`;
-function getCfg(){ try{ const c = JSON.parse(localStorage.getItem(CFG_KEY)); return c && c.apiKey ? c : null; }catch(_){ return null; } }
+// configuração do Firebase da Juju (não é senha: os dados ficam protegidos pelas regras e pelo login)
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAh8H48mY4m1sR47oiEbG4s3pOgpX-r2gs",
+  authDomain: "juju-financas.firebaseapp.com",
+  databaseURL: "https://juju-financas-default-rtdb.firebaseio.com",
+  projectId: "juju-financas",
+  storageBucket: "juju-financas.firebasestorage.app",
+  messagingSenderId: "669790605168",
+  appId: "1:669790605168:web:dfe359a5be0a1ef5ff89b5"
+};
+function getCfg(){ return FIREBASE_CONFIG; }
 function parseCfg(txt){
   const o = {};
   for(const k of ["apiKey","authDomain","databaseURL","projectId","storageBucket","messagingSenderId","appId"]){
@@ -1380,10 +1390,10 @@ function gateLogin(msg){
     if(/invalid-email/.test(c)) return "Esse e-mail não parece certo. Confira.";
     if(/weak-password/.test(c)) return "A senha precisa ter 6 caracteres ou mais.";
     if(/email-already-in-use/.test(c)) return "Esse e-mail já tem conta. Toque em Entrar.";
-    if(/operation-not-allowed/.test(c)) return "O login por e-mail e senha não está ativado no Firebase. Faça o passo 3 da configuração.";
+    if(/operation-not-allowed/.test(c)) return "O login por e-mail e senha não está ativado no Firebase (Authentication → Método de login).";
     if(/too-many-requests/.test(c)) return "Muitas tentativas. Espere alguns minutos.";
     if(/network/.test(c)) return "Sem internet. Confira a conexão.";
-    if(/api-key|configuration/.test(c)) return "A configuração do Firebase está errada. Toque em Trocar configuração e cole de novo.";
+    if(/api-key|configuration/.test(c)) return "O Firebase recusou a configuração. Me avise no Claude que eu arrumo.";
     return "Não deu certo: " + (c || "erro desconhecido"); };
   const go = async (fn) => { err.textContent=""; const e1=email.value.trim(), s1=senha.value;
     if(!e1 || !s1){ err.textContent = "Preencha o e-mail e a senha."; return; }
@@ -1395,8 +1405,7 @@ function gateLogin(msg){
     el("h2",{text:"Oi, Juju 🌸"}),
     el("p",{class:"muted",text:"Entre com seu e-mail e senha. Na primeira vez, toque em Criar minha conta: ela fica só sua, e o app lembra de você."}),
     el("label",{class:"f"}, "E-mail", email), el("label",{class:"f"}, "Senha", senha),
-    err, entrar, criar,
-    el("button",{class:"link",type:"button",text:"Trocar configuração do Firebase",onclick:()=>{ try{ localStorage.removeItem(CFG_KEY); }catch(_){} location.reload(); }}));
+    err, entrar, criar);
   form.onsubmit = e => { e.preventDefault(); go((e1,s1)=>firebase.auth().signInWithEmailAndPassword(e1,s1)); };
   viewEl.replaceChildren(form);
 }
