@@ -4,9 +4,8 @@ App pessoal de finanças (Argentina + Brasil) que abre em tela cheia no iPhone, 
 Os dados ficam no Firebase Realtime Database da dona, protegidos por e-mail e senha.
 
 ## Arquivos
-- `index.html` — o app inteiro
-- `manifest.webmanifest`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` — nome e ícone na tela inicial
-- `sw.js` — deixa o app abrir rápido
+- `index.html` — o app inteiro (um arquivo só)
+- O ícone e o nome do app já estão dentro do `index.html`.
 
 ## Publicar (GitHub Pages)
 1. Envie estes arquivos para um repositório público no GitHub.
